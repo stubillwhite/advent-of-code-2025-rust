@@ -43,10 +43,12 @@ test: ## Run the tests
 
 check: ## Check the code
 	@echo 'Running linter'
-	@uv run ruff check
+	@cargo clippy
 	@echo
-	@echo 'Running static type checks'
-	@uv run dmypy run -- src tests
+
+fix: ## Fix the code
+	@echo 'Running fixes'
+	@cargo clippy --fix --allow-dirty --lib -p advent-of-code-2025-rust
 	@echo
 
 format: ## Format the code

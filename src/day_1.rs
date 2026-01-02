@@ -3,31 +3,31 @@ use std::fs;
 #[derive(Debug)]
 struct ProblemInput {
     direction: String,
-    distance: i32,
+    distance: i64,
 }
 
 fn parse_line(line: &str) -> ProblemInput {
     let direction = line[0..1].to_string();
-    let distance: i32 = line[1..].parse().unwrap();
+    let distance = line[1..].parse().unwrap();
 
-    return ProblemInput {
+    ProblemInput {
         direction,
         distance,
-    };
+    }
 }
 
 fn parse_input(input: String) -> Vec<ProblemInput> {
-    return input.lines().map(|line| parse_line(line)).collect();
+    input.lines().map(parse_line).collect()
 }
 
 #[derive(Debug)]
 struct Safe {
-    position: i32,
-    zeroes: i32,
+    position: i64,
+    zeroes: i64,
 }
 
 pub fn problem_input() -> String {
-    return fs::read_to_string("resources/day-1-input.txt").expect("Unable to read file");
+    fs::read_to_string("resources/day-1-input.txt").expect("Unable to read file")
 }
 
 fn count_zeroes_hit(safe: Safe, input: &ProblemInput) -> Safe {
@@ -39,13 +39,13 @@ fn count_zeroes_hit(safe: Safe, input: &ProblemInput) -> Safe {
 
     let new_zeroes = safe.zeroes + (if new_position == 0 { 1 } else { 0 });
 
-    return Safe {
+    Safe {
         position: new_position,
         zeroes: new_zeroes,
-    };
+    }
 }
 
-pub fn solution_part_one(input: String) -> i32 {
+pub fn solution_part_one(input: String) -> i64 {
     let final_state = parse_input(input).iter().fold(
         Safe {
             position: 50,
@@ -54,7 +54,7 @@ pub fn solution_part_one(input: String) -> i32 {
         count_zeroes_hit,
     );
 
-    return final_state.zeroes;
+    final_state.zeroes
 }
 
 // Part two
@@ -65,10 +65,10 @@ fn count_zeroes_passed(safe: Safe, input: &ProblemInput) -> Safe {
             let new_position = (safe.position + input.distance).rem_euclid(100);
             let new_zeroes = safe.zeroes + ((input.distance + safe.position) / 100);
 
-            return Safe {
+            Safe {
                 position: new_position,
                 zeroes: new_zeroes,
-            };
+            }
         }
         "L" => {
             let new_position = (safe.position - input.distance).rem_euclid(100);
@@ -77,16 +77,16 @@ fn count_zeroes_passed(safe: Safe, input: &ProblemInput) -> Safe {
                 + ((input.distance - safe.position) / 100).abs()
                 + if passed_zero { 1 } else { 0 };
 
-            return Safe {
+            Safe {
                 position: new_position,
                 zeroes: new_zeroes,
-            };
+            }
         }
         _ => panic!("Invalid direction {}", input.direction.as_str()),
     }
 }
 
-pub fn solution_part_two(input: String) -> i32 {
+pub fn solution_part_two(input: String) -> i64 {
     let final_state = parse_input(input).iter().fold(
         Safe {
             position: 50,
@@ -95,5 +95,5 @@ pub fn solution_part_two(input: String) -> i32 {
         count_zeroes_passed,
     );
 
-    return final_state.zeroes;
+    final_state.zeroes
 }
